@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "643964762893",
+    "project_id": "ermad-c9b9d",
+    "storage_bucket": "ermad-c9b9d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:643964762893:android:838453de97a400746fce44",
+        "android_client_info": {
+          "package_name": "com.phoneauthentication"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "643964762893-7s71doukea5d30fdus2t7ajeijr85v2g.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAAM_4jZ4nJ0dMXx3cCfVGt-AZyPDIzlw0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "643964762893-7s71doukea5d30fdus2t7ajeijr85v2g.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
