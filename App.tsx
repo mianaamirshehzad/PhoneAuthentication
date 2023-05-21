@@ -7,6 +7,7 @@ const App = () => {
   return (
     <View style = {styles.container} >
       <Navigation />
+
     </View>
   )
 }

@@ -4,6 +4,7 @@ import CustomButton from '../components/CustomButton';
 import CustomTextInput from '../components/CustomTextInput';
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import app from '../Firebase';
+import CustomImage from '../components/CustomImage';
 
 
 const Signup = (props) => {
@@ -12,7 +13,6 @@ const Signup = (props) => {
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-
 
     const signup = () => {
         try {
@@ -34,9 +34,8 @@ const Signup = (props) => {
     }
     return (
         <View style={styles.container} >
-            <Image
-                source={require('../assets/images/signup.jpg')}
-                style={styles.image} />
+            <CustomImage
+                source = {require('../assets/images/signup.jpg')} />
             <View style={styles.view} >
                 <TouchableOpacity>
                     <Text style={styles.barText}  >
@@ -79,31 +78,9 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
-    image: {
-        height: 200,
-        width: 400,
-        borderRadius: 10,
-        borderColor: 'black',
-        borderWidth: 2,
-        // marginBottom: 10,
-        position: 'absolute',
-        top: 0,
-    },
     text: {
         justifyContent: 'center',
         margin: 25,
-    },
-    view: {
-        flexDirection: 'row',
-        justifyContent: 'space-evenly',
-        backgroundColor: '#d3d3d3',
-        width: '90%',
-        height: '7%',
-        marginTop: 10,
-    },
-    barText: {
-        padding: 17,
-        fontWeight: 'bold'
     },
     bottomText: {
         padding: 17,
