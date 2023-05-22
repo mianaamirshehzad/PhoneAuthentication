@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, ToastAndroid, Image, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, ToastAndroid, KeyboardAvoidingView, Image, ActivityIndicator } from 'react-native';
 import CustomButton from '../components/CustomButton';
 import CustomTextInput from '../components/CustomTextInput';
 import app from '../Firebase';
@@ -25,9 +25,6 @@ const SmsCode = (props) => {
         }
     }
 
-    function showit() {
-        alert(phoneNumber)
-    }
     // Handle the button press
     async function signIn(phoneNumber) {
         showToast();
@@ -59,10 +56,23 @@ const SmsCode = (props) => {
     };
 
     return (
-        <View style={styles.container} >
-            <CustomImage 
-                source = {require('../assets/images/code.jpg')} />
-            <Banner />
+        <KeyboardAvoidingView style={styles.container} >
+            <CustomImage
+                source={require('../assets/images/code.jpg')} />
+            <View style={styles.view} >
+                <TouchableOpacity
+                    onPress={() => props.navigation.navigate("Signup")} >
+                    <Text style={styles.barText}  >
+                        Email
+                    </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                >
+                    <Text style={styles.barText}>
+                        Phone
+                    </Text>
+                </TouchableOpacity>
+            </View>
             <Text style={styles.text} >
                 What is your phone number?
             </Text>
@@ -70,7 +80,7 @@ const SmsCode = (props) => {
                 <TouchableOpacity
                     onPress={() => setShow(true)}
                     style={{ flex: 1, backgroundColor: '#d3d3d2', borderRadius: 10, padding: 10, margin: 8, }}>
-                   <Text>{countryCode}</Text>
+                    <Text style = {{ padding: 5}} >{countryCode}</Text>
                     <CountryPicker
                         show={show}
                         // when picker button press you will get the country object with dial code
@@ -81,15 +91,14 @@ const SmsCode = (props) => {
                     />
                 </TouchableOpacity>
                 <TextInput
-                    onChangeText={(n) => setPhoneNumber(n)}
+                    onChangeText={(n) => setPhoneNumber(countryCode + n)}
                     placeholder='e.g 3001234567'
                     keyboardType='numbers-and-punctuation'
                     style={{ flex: 4, backgroundColor: '#d3d3d2', borderRadius: 10, padding: 10, margin: 8, }} />
             </View>
             <CustomButton
                 text='Send Confirmation Code'
-                // onPress={() => signIn(phoneNumber)}
-                onPress= {() => showit()}
+                onPress={() => signIn(phoneNumber)}
             />
             <ActivityIndicator size={'large'} color={'purple'} animating={loading} />
             <Text style={styles.textUnderButton} >
@@ -108,7 +117,7 @@ const SmsCode = (props) => {
                     <Text style={{ fontWeight: 'bold' }}> Login</Text>
                 </TouchableOpacity>
             </View>
-        </View>
+        </KeyboardAvoidingView>
     );
 };
 
@@ -140,7 +149,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         bottom: 0,
         marginBottom: 35,
-    }
+    },
 });
 
 export default SmsCode;

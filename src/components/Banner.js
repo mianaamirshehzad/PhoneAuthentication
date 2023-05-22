@@ -1,16 +1,18 @@
 import React from 'react';
-import { View, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
 
 const Banner = (props) => {
     return (
         <View style={styles.view} >
             <TouchableOpacity
-                onPress={() => props.navigation.navigate("Signup")} >
+                onPress={props.onPress}
+                >
                 <Text style={styles.barText}  >
                     Email
                 </Text>
             </TouchableOpacity>
-            <TouchableOpacity>
+            <TouchableOpacity
+                onPress={props.onPress} >
                 <Text style={styles.barText}>
                     Phone
                 </Text>
