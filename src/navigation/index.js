@@ -6,6 +6,8 @@ import SmsCode from '../screens/SmsCode';
 import Signup from '../screens/Signup';
 import Login from '../screens/Login';
 import VerifyCode from '../screens/VerifyCode';
+import Account from '../screens/Account';
+import Grocery from '../screens/Grocery';
 
 const Stack = createNativeStackNavigator();
 
@@ -30,6 +32,14 @@ const Navigation = () => {
           name="VerifyCode"
           component={VerifyCode}
           options={{ title: "" }} />
+          <Stack.Screen
+            name='Account'
+            component={Account}
+            options={{headerShown: false}} />
+          <Stack.Screen
+            name='Grocery'
+            component={Grocery}
+            options={{headerShown: false}} />
       </Stack.Navigator>
     </NavigationContainer>
   );

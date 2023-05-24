@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, KeyboardAvoidingView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, KeyboardAvoidingView, ScrollView } from 'react-native';
 import CustomButton from '../components/CustomButton';
 import CustomTextInput from '../components/CustomTextInput';
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
@@ -13,29 +13,34 @@ const Signup = (props) => {
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [confirmPass, setConfirmPass] = useState("");
+   
 
     const signup = () => {
-        try {
-            createUserWithEmailAndPassword(auth, email, password)
-                .then((userCredential) => {
-                    // Signed in 
-                    const user = userCredential.user;
-                    // SMS validation after account creation;
-                    props.navigation.navigate("PhoneSignIn");
-                })
-                .catch((error) => {
-                    const errorCode = error.code;
-                    const errorMessage = error.message;
-                    // ..
-                });
-        } catch (error) {
-            console.log(error);
+        if (password === confirmPass) {
+            try {
+                createUserWithEmailAndPassword(auth, email, password)
+                    .then((userCredential) => {
+                        // Signed in 
+                        const user = userCredential.user;
+                        console.log("Signup successful!")
+                        props.navigation.navigate("Account");
+                    })
+                    .catch((error) => {
+                        const errorCode = error.code;
+                        const errorMessage = error.message;
+                        // ..
+                    });
+            } catch (error) {
+                console.log(error);
+            }
+        } else {
+            alert("Password does not match");
         }
     }
     return (
-        <KeyboardAvoidingView
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            style={styles.container} >
+        <ScrollView>
+            <View style={styles.container} >
                 <CustomImage
                     source={require('../assets/images/signup.jpg')} />
                 <View style={styles.view} >
@@ -52,7 +57,7 @@ const Signup = (props) => {
                     </TouchableOpacity>
                 </View>
                 <Text style={styles.text} >
-                    Register your username and password
+                    Register your accout
                 </Text>
                 <CustomTextInput
                     placeholder="Email"
@@ -61,17 +66,33 @@ const Signup = (props) => {
                     placeholder="Password"
                     onChangeText={(t) => setPassword(t)}
                     secureTextEntry={true} />
-                <CustomButton
-                    text='Create'
-                    onPress={signup}
-                />
-
+                <CustomTextInput
+                    placeholder="Confirm Password"
+                    onChangeText={(t) => setConfirmPass(t)}
+                    secureTextEntry={true} />
                 <Text style={styles.bottomText} >
                     By signing up, you agree to
                     <Text style={{ fontWeight: 'bold' }}> Terms of Services</Text>  & <Text style={{ fontWeight: 'bold' }}>Privacy Policy</Text>.
                 </Text>
-        </KeyboardAvoidingView >
+                <CustomButton
+                    text='Create'
+                    onPress={signup}
+                />
+                <View style={styles.bottomText} >
+                    <Text >
+                        Already have an account? {""}
+                    </Text>
+                    <TouchableOpacity
+                        onPress={() => props.navigation.navigate("Login")} >
+                        <Text style={{ fontWeight: 'bold' }}>
+                            Login
+                        </Text>
+                    </TouchableOpacity>
+                </View>
 
+
+            </View>
+        </ScrollView>
     );
 };
 
@@ -87,6 +108,7 @@ const styles = StyleSheet.create({
     },
     bottomText: {
         padding: 17,
+        flexDirection: 'row'
     },
     view: {
         flexDirection: 'row',
@@ -94,7 +116,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#d3d3d3',
         width: '90%',
         height: '7%',
-        marginTop: 10,
+        // marginTop: 10,
     },
     barText: {
         padding: 17,

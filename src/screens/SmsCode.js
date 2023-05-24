@@ -7,6 +7,7 @@ import auth from '@react-native-firebase/auth';
 import { CountryPicker } from "react-native-country-codes-picker";
 import CustomImage from '../components/CustomImage';
 import Banner from '../components/Banner';
+import showToast from '../components/Toast';
 
 
 const SmsCode = (props) => {
@@ -27,7 +28,7 @@ const SmsCode = (props) => {
 
     // Handle the button press
     async function signIn(phoneNumber) {
-        showToast();
+       showToast("Opening browser for verification")
         if (phoneNumber) {
             setLoading(true)
             try {
@@ -47,9 +48,9 @@ const SmsCode = (props) => {
     };
 
     //Showing Toast Message to alert the user about Human Verification via Broswer 
-    const showToast = () => {
+    const showvToast = () => {
         ToastAndroid.showWithGravity(
-            'Starting Robot Verification via Broswer',
+            'Opening browser for Verification via Broswer',
             ToastAndroid.SHORT,
             ToastAndroid.CENTER,
         );

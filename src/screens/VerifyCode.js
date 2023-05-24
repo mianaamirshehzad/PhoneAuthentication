@@ -5,6 +5,7 @@ import CustomTextInput from '../components/CustomTextInput';
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import app from '../Firebase';
 import { auth, firebase } from '@react-native-firebase/auth';
+import showToast from '../components/Toast';
 
 
 const VerifyCode = (props) => {
@@ -13,21 +14,13 @@ const VerifyCode = (props) => {
 
     const [code, setCode] = useState(''); // verification code (OTP - One-Time-Passcode)
 
-    //Displaying Success message for successful OTP verification
-    const showToast = () => {
-        ToastAndroid.showWithGravity(
-            'Successful OTP Verification!',
-            ToastAndroid.SHORT,
-            ToastAndroid.CENTER,
-        );
-    };
     //Otp will be in SMS 
     const verify = async () => {
         if (code) {
             console.log(code)
             try {
                 await confirm.confirm(code)
-                showToast();
+                showToast("OTP Verification Successful");
                 props.navigation.navigate('Login');
             } catch (error) {
                 const errorCode = error.code;
@@ -56,7 +49,7 @@ const VerifyCode = (props) => {
                 style={styles.image} />
             <Text style={styles.text} >
                 Enter the OTP that you just received on {" "}
-                {mobile}
+                {mobile}. The SMS delivery may take a while.
             </Text>
             <CustomTextInput
                 placeholder="One-Time Passcode (OTP)"
