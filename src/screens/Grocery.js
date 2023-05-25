@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, ActivityIndicator, Keyboard, FlatList, KeyboardAvoidingView } from 'react-native';
+import { View, Text, StyleSheet, TextInput, Alert, TouchableOpacity, ActivityIndicator, Keyboard, FlatList, KeyboardAvoidingView, Modal } from 'react-native';
 import { getAuth, signOut } from "firebase/auth";
 import app from '../Firebase';
-import { doc, setDoc, getFirestore, addDoc, collection, getDocs, deleteDoc } from '@firebase/firestore'
+import { doc, serverTimestamp, getFirestore, orderBy, addDoc, collection, getDocs, deleteDoc, updateDoc, terminate } from '@firebase/firestore'
 import showToast from '../components/Toast';
 import CustomView from '../components/CustomView';
-import KoiBhi from '../components/KoiBhi';
+import ItemView from '../components/ItemView';
+import Spinner from '../components/Spinner';
+import CustomModal from '../components/CustomModal';
 
 
 const Grocery = (props) => {
@@ -14,26 +16,29 @@ const Grocery = (props) => {
     const db = getFirestore(app);
     const [groceryItem, setGroceryItem] = useState("");
     const [cloudItem, setCloudItem] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [modalVisible, setModalVisible] = useState(false)
 
     const cloudUploading = async () => {
         Keyboard.dismiss();
         if (groceryItem) {
             try {
-                showToast("Saving Grocery Item")
+                showToast("Grocery item is being saved");
                 const docRef = await addDoc(collection(db, "grocery"), {
                     groceryItem: groceryItem,
+                    timestamp: serverTimestamp(),
                 });
                 console.log("Document written with ID: ", docRef.id);
             } catch (error) {
-                // alert("Data uploading error")
                 const errorMessage = error.Message;
                 const errorCode = error.code;
                 alert(errorMessage);
             }
         } else {
-            alert("You've not input anything")
+            alert("You've not input anything");
         }
         setGroceryItem(null);
+        retrieveData();
     }
     //Getting Data from Cloud when user adds a new item
     const retrieveData = async () => {
@@ -49,36 +54,72 @@ const Grocery = (props) => {
         setCloudItem(temp);
     };
     // Deleting a document
-    const deleteData = async (id) => {
-        console.log("fn called" + id)
-        const ref = await deleteDoc(doc(db, "grocery", id));
-        console.log('item deleted')
-        // console.log(ref);
+    const deleteItem =  (id) => {
+        Alert.alert("Action required!", "What do you want to do?", [
+            {
+                text: "Edit",
+                onPress: () => setModalVisible(true)
+            },
+            {
+                text: "Cancel",
+                onPress: () => console.log("Cancel pressed")
+            },
+            {
+                text: "Delete",
+                onPress: async () => {
+                    const ref = await deleteDoc(doc(db, "grocery", id));
+                    showToast("Item deleted");
+                    retrieveData();
+                    console.log('Item deleted with' + id);
+                }
+            }
+        ])
+
     }
 
+    function show () {
+        alert("show press")
+    }
+    //Updating the document 
+    const letMeUpdate = async (id) => {
+        const myDocRef = doc(db, "grocery", id);
+        await updateDoc(myDocRef, {
+            groceryItem: "breakfast"
+        });
+        console.log('Update successful')
+    };
+
     useEffect(() => {
+        setLoading(true)
         retrieveData();
-    }, [groceryItem])
-    // return null;
-    console.log(cloudItem);
+        setTimeout ( () => {
+            setModalVisible(false);
+        }, 3000)
+    }, []);
+
     return (
         <View style={styles.container} >
-
             <Text style={styles.title} >
                 Grocery List
             </Text>
+            <Spinner animating = {loading} />
+            <CustomModal 
+                visible = {modalVisible}
+                onCancel = {() => setModalVisible(false)}
+                onPress = {() => alert("Hi")} />
             {/* Here will be our Items when fetched from firebase */}
             {
                 cloudItem.length > 0 ?
                     <FlatList
                         data={cloudItem}
                         renderItem={({ item }) =>
-                            <KoiBhi text={item.data().groceryItem} onLongPress={() => deleteData(item.id)} />
-                            // <CustomView title={item.groceryItem} />
+                            <ItemView text={item.data().groceryItem}
+                                onLongPress={() => deleteItem(item.id)} />
                         }
                         keyExtractor={item => item.id} /> :
                     <ActivityIndicator />
             }
+            
             {/* Write a New Grocery Item Section */}
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}

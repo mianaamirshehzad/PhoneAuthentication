@@ -5,6 +5,7 @@ import CustomTextInput from '../components/CustomTextInput';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import app from '../Firebase';
 import CustomImage from '../components/CustomImage';
+import Spinner from '../components/Spinner';
 
 
 const Login = (props) => {
@@ -12,15 +13,18 @@ const Login = (props) => {
     const auth = getAuth(app);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState("");
+    const [loading, setLoading] = useState(false);
 
     const login = () => {
         Keyboard.dismiss();
         try {
+            setLoading(true);
             signInWithEmailAndPassword(auth, email, password)
                 .then((userCredential) => {
                     // Signed in 
                     const user = userCredential.user;
                     console.log("User logged-in")
+                    setLoading(false);
                     props.navigation.navigate("Account");
                 })
                 .catch((error) => {
@@ -29,7 +33,7 @@ const Login = (props) => {
                     alert(errorMessage);
                 });
         } catch (error) {
-                console.log(error);
+            console.log(error);
         }
     }
 
@@ -41,6 +45,7 @@ const Login = (props) => {
             <Text style={styles.text} >
                 Welcome Back!
             </Text>
+            <Spinner animating={loading} />
             <CustomTextInput
                 placeholder="Email"
                 onChangeText={(t) => setEmail(t)} />

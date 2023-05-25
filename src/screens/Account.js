@@ -33,7 +33,6 @@ const Account = (props) => {
                         amount: amount
                     });
                     console.log("Document written with ID: ", docRef.id);
-
                 } catch (error) {
                     // alert("Data uploading error")
                     const errorMessage = error.Message;
@@ -49,7 +48,7 @@ const Account = (props) => {
     }
 
     useEffect(() => {
-        console.log("Mounted!");
+        console.log("Account => ");
     }, [])
     return (
         <View style={styles.container} >

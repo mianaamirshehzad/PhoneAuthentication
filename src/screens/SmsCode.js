@@ -47,15 +47,6 @@ const SmsCode = (props) => {
         // props.navigation.navigate("VerifyCode", { phoneNumber });
     };
 
-    //Showing Toast Message to alert the user about Human Verification via Broswer 
-    const showvToast = () => {
-        ToastAndroid.showWithGravity(
-            'Opening browser for Verification via Broswer',
-            ToastAndroid.SHORT,
-            ToastAndroid.CENTER,
-        );
-    };
-
     return (
         <KeyboardAvoidingView style={styles.container} >
             <CustomImage
