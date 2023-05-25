@@ -8,7 +8,7 @@ const CustomModalView = (props) => {
     return (
         <Modal
             animationType="slide"
-            transparent={false}
+            transparent={true}
             visible={props.visible}>
             <View style={styles.modalView} >
                 <TouchableOpacity onPress = {props.onCancel} style = {{right:0}} >

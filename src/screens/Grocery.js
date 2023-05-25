@@ -1,21 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TextInput, Alert, TouchableOpacity, ActivityIndicator, Keyboard, FlatList, KeyboardAvoidingView, Modal } from 'react-native';
-import { getAuth, signOut } from "firebase/auth";
+import { View, Text, StyleSheet, TextInput, Alert, TouchableOpacity, Keyboard, FlatList, KeyboardAvoidingView, Modal } from 'react-native';
+import { getAuth } from "firebase/auth";
 import app from '../Firebase';
-import { doc, serverTimestamp, getFirestore, orderBy, addDoc, collection, getDocs, deleteDoc, updateDoc, terminate } from '@firebase/firestore'
+import { doc, serverTimestamp, getFirestore, addDoc, collection, getDocs, deleteDoc, updateDoc } from '@firebase/firestore'
 import showToast from '../components/Toast';
-import CustomView from '../components/CustomView';
 import ItemView from '../components/ItemView';
 import Spinner from '../components/Spinner';
 import CustomModal from '../components/CustomModal';
-
 
 const Grocery = (props) => {
 
     const auth = getAuth(app);
     const db = getFirestore(app);
-    const [groceryItem, setGroceryItem] = useState("");
+    const [groceryItem, setGroceryItem] = useState([]);
     const [cloudItem, setCloudItem] = useState([]);
+    const [manipData, setManipData] = useState([]);
     const [loading, setLoading] = useState(false);
     const [modalVisible, setModalVisible] = useState(false)
     const [updateItem, setUpdateItem] = useState("");
@@ -40,22 +39,22 @@ const Grocery = (props) => {
             alert("You've not input anything");
         }
         setGroceryItem(null);
-        retrieveData();
     }
     //Getting Data from Cloud when user adds a new item
     const retrieveData = async () => {
         const querySnapshot = await getDocs(collection(db, "grocery"));
         const temp = [];
         querySnapshot.forEach((doc) => {
-            // doc.data() is never undefined for query doc snapshots
-            console.log(doc.id, " => ", doc.data());
+            console.log(doc.id, " => ", doc.data()); // doc.data() is never undefined for query doc snapshots
             console.log('its doc: ' + JSON.stringify(doc))
             temp.push(doc);
             console.log('Data retrieved: ' + cloudItem);
         });
         setCloudItem(temp);
+        console.log("Saved locally => ");
+        setManipData(...manipData, cloudItem);
     };
-    // Deleting a document
+    // Multiple Options for user on onLongPress() on which a specific function will call
     const selectOption = (id) => {
         Alert.alert("Action required!", "What do you want to do?", [
             {
@@ -74,24 +73,21 @@ const Grocery = (props) => {
                 onPress: async () => {
                     const ref = await deleteDoc(doc(db, "grocery", id));
                     showToast("Item deleted");
-                    retrieveData();
                     console.log('Item deleted with' + id);
                 }
             }
         ])
 
     }
-
-    //Updating the document 
+    //Updating the existing document 
     const letMeUpdate = async () => {
-            console.log(updateItem)
-            const myDocRef = doc(db, "grocery", updateId);
-            await updateDoc(myDocRef, {
-                groceryItem: updateItem
-            });
-            showToast("Item updated");
-            console.log('Update successful');
-            setModalVisible(false);
+        console.log(updateItem)
+        const myDocRef = doc(db, "grocery", updateId);
+        await updateDoc(myDocRef, {
+            groceryItem: updateItem
+        });
+        showToast("Item updated");
+        setModalVisible(false);
     };
 
     useEffect(() => {
@@ -111,9 +107,9 @@ const Grocery = (props) => {
                 onPress={() => letMeUpdate()} />
             {/* Here will be our Items when fetched from firebase */}
             {
-                cloudItem.length > 0 ?
+                manipData.length > 0 ?
                     <FlatList
-                        data={cloudItem}
+                        data={manipData}
                         renderItem={({ item }) =>
                             <ItemView text={item.data().groceryItem}
                                 onLongPress={() => selectOption(item.id)} />
