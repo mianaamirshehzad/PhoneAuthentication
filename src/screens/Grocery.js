@@ -18,6 +18,8 @@ const Grocery = (props) => {
     const [cloudItem, setCloudItem] = useState([]);
     const [loading, setLoading] = useState(false);
     const [modalVisible, setModalVisible] = useState(false)
+    const [updateItem, setUpdateItem] = useState("");
+    const [updateId, setUpdateId] = useState("");
 
     const cloudUploading = async () => {
         Keyboard.dismiss();
@@ -54,11 +56,14 @@ const Grocery = (props) => {
         setCloudItem(temp);
     };
     // Deleting a document
-    const deleteItem =  (id) => {
+    const selectOption = (id) => {
         Alert.alert("Action required!", "What do you want to do?", [
             {
-                text: "Edit",
-                onPress: () => setModalVisible(true)
+                text: "Update",
+                onPress: () => {
+                    setUpdateId(id);
+                    setModalVisible(true)
+                }
             },
             {
                 text: "Cancel",
@@ -77,24 +82,21 @@ const Grocery = (props) => {
 
     }
 
-    function show () {
-        alert("show press")
-    }
     //Updating the document 
-    const letMeUpdate = async (id) => {
-        const myDocRef = doc(db, "grocery", id);
-        await updateDoc(myDocRef, {
-            groceryItem: "breakfast"
-        });
-        console.log('Update successful')
+    const letMeUpdate = async () => {
+            console.log(updateItem)
+            const myDocRef = doc(db, "grocery", updateId);
+            await updateDoc(myDocRef, {
+                groceryItem: updateItem
+            });
+            showToast("Item updated");
+            console.log('Update successful');
+            setModalVisible(false);
     };
 
     useEffect(() => {
-        setLoading(true)
+        setLoading(true);
         retrieveData();
-        setTimeout ( () => {
-            setModalVisible(false);
-        }, 3000)
     }, []);
 
     return (
@@ -102,11 +104,11 @@ const Grocery = (props) => {
             <Text style={styles.title} >
                 Grocery List
             </Text>
-            <Spinner animating = {loading} />
-            <CustomModal 
-                visible = {modalVisible}
-                onCancel = {() => setModalVisible(false)}
-                onPress = {() => alert("Hi")} />
+            <CustomModal
+                visible={modalVisible}
+                onChangeText={(t) => setUpdateItem(t)}
+                onCancel={() => setModalVisible(false)}
+                onPress={() => letMeUpdate()} />
             {/* Here will be our Items when fetched from firebase */}
             {
                 cloudItem.length > 0 ?
@@ -114,12 +116,11 @@ const Grocery = (props) => {
                         data={cloudItem}
                         renderItem={({ item }) =>
                             <ItemView text={item.data().groceryItem}
-                                onLongPress={() => deleteItem(item.id)} />
+                                onLongPress={() => selectOption(item.id)} />
                         }
                         keyExtractor={item => item.id} /> :
-                    <ActivityIndicator />
+                    <Spinner animating={loading} />
             }
-            
             {/* Write a New Grocery Item Section */}
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}

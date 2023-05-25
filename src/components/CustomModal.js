@@ -11,18 +11,19 @@ const CustomModalView = (props) => {
             transparent={false}
             visible={props.visible}>
             <View style={styles.modalView} >
-                <Image
-                    source={require("../assets/images/cancel.png")}
-                    style = {styles.img}
-                    onPress = {props.onCancel}
-                />
+                <TouchableOpacity onPress = {props.onCancel} style = {{right:0}} >
+                    <Image
+                        source={require("../assets/images/cancel.png")}
+                        style={styles.img}
+                    />
+                </TouchableOpacity>
                 <Text style={styles.title} >
                     Update Grocery Item
                 </Text>
                 <CustomTextInput
                     placeholder='Type here...'
                     onChangeText={props.onChangeText} />
-                <CustomButton text="Change"
+                <CustomButton text="Update Item"
                     onPress={props.onPress} />
             </View>
         </Modal>
@@ -31,7 +32,7 @@ const CustomModalView = (props) => {
 
 const styles = StyleSheet.create({
     container: {
-
+        flex: 1,
     },
     modalView: {
         backgroundColor: 'lightblue',
@@ -40,17 +41,17 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         alignItems: 'center',
         justifyContent: 'center',
-        height: '50%'
+        height: '50%',
     },
     title: {
         fontSize: 25,
         fontWeight: 'bold',
         alignItems: 'center',
-        marginTop: 30,
+        marginTop: 20,
         color: 'black'
     },
     img: {
-        width: 40, 
+        width: 40,
         height: 40,
     }
 });
